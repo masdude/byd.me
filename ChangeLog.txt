@@ -1,0 +1,5 @@
+# byd changelog
+
+## 2012-10-17 0.01
+
+* First public version.
