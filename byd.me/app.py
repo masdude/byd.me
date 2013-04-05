@@ -32,7 +32,7 @@ def whois_get():
             return render_template('whois_query.html', whois_info='', domain='')
     except:
         return render_template('whois_query.html', whois_info='', domain='')
-    
+
 @app.route('/whois/<domain>', methods=["GET"])
 def whois_query(domain):
     try:
@@ -75,14 +75,6 @@ def w(domain):
     except Exception, e:
         print e
         return json.dumps({'code':1, 'message':'抱歉，发生了错误，亲'})
-
-@app.route('/api/weixin', methods=["GET"])
-def weixin():
-    signature = request.args.get('signature','')
-    timestamp = request.args.get('timestamp','')
-    nonce = request.args.get('nonce','')
-    echostr = request.args.get('echostr','')
-    return echostr
 
 @app.route('/api/weixin', methods=["GET", "POST"])
 def weixin():
