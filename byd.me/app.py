@@ -126,13 +126,14 @@ def weixin():
             response = etree.tostring(res_xml, encoding=unicode)
             return Response(response, mimetype='text/xml')
     else:
+        token = config.TOKEN
         signature = request.args.get('signature','')
         timestamp = request.args.get('timestamp','')
         nonce = request.args.get('nonce','')
         echostr = request.args.get('echostr','')
-        hashstr = hashlib.sha1(''.join([signature, timestamp, nonce])).hexdigest()
-        if hashstr == echostr:
-            return hashstr
+        hashstr = hashlib.sha1(''.join(sorted([token, timestamp, nonce]))).hexdigest()
+        if hashstr == signature:
+            return echostr
         else:
             return ''
 
