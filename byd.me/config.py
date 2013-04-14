@@ -1,12 +1,30 @@
 #!/usr/bin/python
 #coding=utf-8
 
-HOST='localhost'
-PORT=8080
+HOST = 'localhost'
+PORT = 8080
 MAX_RETRY_TIMES = 3
 TIMEOUT = 4
 TOKEN = ''
-TLDS = [ 'gs', 'gy', 'gg', 'gd', 'edu', 'gl', 'gi', 'xn--kprw13d', 'tz', 'tv', 'tw', 'tr', 'tn', 'to', 'tl', 'xn--lgbbat1ad8j', 'tk', 'th', 'tf', 'xn--clchc0ea0b2g2a9gcd', 'tc', 'coop', 'dk', 'de', 'dz', 'xn--mgb9awbf', 'gov', 'qa', 'tel', 'asia', 'net', 'xn--3e0b707e', 'wf', 'jobs', 'jp', 'ws', 'je', 'com', 'ci', 'ch', 'co', 'cn', 'cl', 'cc', 'arpa', 'ca', 'xn--kpry57d', 'cz', 'cx', 'pr', 'pt', 'int', 'tm', 'pe', 'pl', 'pm', 'aero', 'me', 'md', 'mg', 'ma', 'mo', 'mn', 'cat', 'mu', 'mp', 'ms', 'my', 'mx', 'vc', 've', 'vg', 'iq', 'is', 'ir', 'it', 'dm', 'im', 'il', 'io', 'in', 'ie', 'travel', 'fr', 'xn--fiqs8s', 'xn--mgberp4a5d4ar', 'fi', 'fo', 'sx', 'xn--yfro4i67o', 'su', 'st', 'sk', 'si', 'sh', 'so', 'sn', 'sm', 'sc', 'sb', 'sa', 'sg', 'se', 'la', 'xn--80ao21a', 'xn--fiqz9s', 'li', 'lv', 'lt', 'lu', 'ly', 'biz', 'yt', 'name', 'ee', 'ec', 'eu', 'xn--wgbl6a', 'es', 'ru', 'rs', 're', 'ro', 'be', 'bg', 'bo', 'bi', 'bj', 'br', 'org', 'post', 'by', 'om', 'xn--mgbaam7a8h', 'xn--j6w193g', 'museum', 'hr', 'ht', 'hu', 'hk', 'xn--o3cw4h', 'mobi', 'hn', 'info', 'uy', 'uz', 'us', 'uk', 'ug', 'ua', 'ac', 'ae', 'ag', 'af', 'ai', 'pro', 'am', 'as', 'au', 'at', 'nl', 'no', 'na', 'nc', 'nf', 'ng', 'nz', 'nu', 'xxx', 'kg', 'ke', 'ki', 'kr', 'xn--ygbi2ammx', 'xn--p1ai', 'kz' ]
+TLDS = ['gs', 'gy', 'gg', 'gd', 'edu', 'gl', 'gi', 'xn--kprw13d', 'tz', 'tv',
+        'tw', 'tr', 'tn', 'to', 'tl', 'xn--lgbbat1ad8j', 'tk', 'th', 'tf',
+        'xn--clchc0ea0b2g2a9gcd', 'tc', 'coop', 'dk', 'de', 'dz',
+        'xn--mgb9awbf', 'gov', 'qa', 'tel', 'asia', 'net', 'xn--3e0b707e',
+        'wf', 'jobs', 'jp', 'ws', 'je', 'com', 'ci', 'ch', 'co', 'cn', 'cl',
+        'cc', 'arpa', 'ca', 'xn--kpry57d', 'cz', 'cx', 'pr', 'pt', 'int',
+        'tm', 'pe', 'pl', 'pm', 'aero', 'me', 'md', 'mg', 'ma', 'mo', 'mn',
+        'cat', 'mu', 'mp', 'ms', 'my', 'mx', 'vc', 've', 'vg', 'iq', 'is',
+        'ir', 'it', 'dm', 'im', 'il', 'io', 'in', 'ie', 'travel', 'fr',
+        'xn--fiqs8s', 'xn--mgberp4a5d4ar', 'fi', 'fo', 'sx', 'xn--yfro4i67o',
+        'su', 'st', 'sk', 'si', 'sh', 'so', 'sn', 'sm', 'sc', 'sb', 'sa',
+        'sg', 'se', 'la', 'xn--80ao21a', 'xn--fiqz9s', 'li', 'lv', 'lt', 'lu',
+        'ly', 'biz', 'yt', 'name', 'ee', 'ec', 'eu', 'xn--wgbl6a', 'es', 'ru',
+        'rs', 're', 'ro', 'be', 'bg', 'bo', 'bi', 'bj', 'br', 'org', 'post',
+        'by', 'om', 'xn--mgbaam7a8h', 'xn--j6w193g', 'museum', 'hr', 'ht',
+        'hu', 'hk', 'xn--o3cw4h', 'mobi', 'hn', 'info', 'uy', 'uz', 'us',
+        'uk', 'ug', 'ua', 'ac', 'ae', 'ag', 'af', 'ai', 'pro', 'am', 'as',
+        'au', 'at', 'nl', 'no', 'na', 'nc', 'nf', 'ng', 'nz', 'nu', 'xxx',
+        'kg', 'ke', 'ki', 'kr', 'xn--ygbi2ammx', 'xn--p1ai', 'kz']
 
 WHOIS_SERVER = {
     "ac": "whois.nic.ac",

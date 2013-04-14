@@ -6,9 +6,7 @@ from gevent import socket
 from gevent import monkey
 monkey.patch_all()
 import config
-import re
-import time
-import urllib2
+
 
 def whois(server, domain):
     '''get whois info from whois server'''
@@ -41,10 +39,11 @@ def whois(server, domain):
     whois_info = ''.join(response)
     return whois_info
 
+
 def check(domain):
     '''check whether domain can be registered'''
 
-    if '.' not in domain :
+    if '.' not in domain:
         domain = '%s.com' % domain
     tld = domain.split('.')[-1]
     whois_info = whois(config.WHOIS_SERVER[tld], domain)
@@ -57,20 +56,24 @@ def check(domain):
         message = u'%s 已被注册，亲 /难过 \nwhois: byd.me/whois/%s' % (domain, domain)
     return message
 
+
 def checkone(prefix, suffix):
 
     with gevent.Timeout(config.TIMEOUT, False) as timeout:
         try:
-            whois_info = whois(config.WHOIS_SERVER[suffix], '%s.%s' % (prefix, suffix))
+            whois_info = whois(
+                config.WHOIS_SERVER[suffix], '%s.%s' % (prefix, suffix))
         except KeyError:
             return -1
         if not whois_info:
             return -1
         return config.NO_MATCH_INFO[suffix] in whois_info
 
+
 def checkall(prefix):
 
-    pop_tlds  = ['com', 'net', 'org', 'cc', 'co', 'me', 'in', 'info', 'mobi', 'biz', 'cn']
+    pop_tlds = ['com', 'net', 'org', 'cc', 'co', 'me', 'in', 'info',
+                'mobi', 'biz', 'cn']
     jobs = [gevent.spawn(checkone, prefix, suffix) for suffix in pop_tlds]
     gevent.joinall(jobs)
     results = [job.value for job in jobs]
