@@ -5,7 +5,11 @@ import gevent
 from gevent import socket
 from gevent import monkey
 monkey.patch_all()
+
+import re
 import config
+import json
+import requests
 
 
 def whois(server, domain):
@@ -33,7 +37,7 @@ def whois(server, domain):
             s.close()
             return None
         response.append(data)
-        if data == '' or data == None:
+        if data == '' or data is None:
             break
     s.close()
     whois_info = ''.join(response)
@@ -59,7 +63,7 @@ def check(domain):
 
 def checkone(prefix, suffix):
 
-    with gevent.Timeout(config.TIMEOUT, False) as timeout:
+    with gevent.Timeout(config.TIMEOUT, False):
         try:
             whois_info = whois(
                 config.WHOIS_SERVER[suffix], '%s.%s' % (prefix, suffix))
@@ -77,8 +81,63 @@ def checkall(prefix):
     jobs = [gevent.spawn(checkone, prefix, suffix) for suffix in pop_tlds]
     gevent.joinall(jobs)
     results = [job.value for job in jobs]
-    results = map(lambda r: r if r != None else -1, results)
+    results = map(lambda r: r if r is not None else -1, results)
     return results
+
+baidu_site_match = re.compile('class="nums"[^>]*?>.*?(?P<baidu>[,0-9]+).*?<')
+baidu_link_match = re.compile('class="nums"[^>]*?>.*?(?P<baidu>[,0-9]+).*?<')
+sogou_site_match = re.compile(r'zhanzhang.*?em>(?P<sogou>[,0-9]+)<')
+sogou_link_match = re.compile(r'id="scd_num">(?P<sogou>[,0-9]+)<')
+google_site_match = re.compile('"estimatedResultCount":"(?P<google>\d+)"')
+google_link_match = re.compile('"estimatedResultCount":"(?P<google>\d+)"')
+
+SITES = {
+    'baidu_site': {
+        'name': '',
+        'match': baidu_site_match,
+        'url': 'http://www.baidu.com/s?wd=site:%s',
+    },
+    'baidu_link': {
+        'name': '',
+        'match': baidu_link_match,
+        'url': 'http://www.baidu.com/s?wd=domain:%s',
+    },
+    'sogou_site': {
+        'name': '',
+        'match': sogou_site_match,
+        'url': 'http://www.sogou.com/web?query=site:%s',
+    },
+    'sogou_link': {
+        'name': '',
+        'match': sogou_link_match,
+        'url': 'http://www.sogou.com/web?query="%s"',
+    },
+    'google_site': {
+        'name': '',
+        'match': google_site_match,
+        'url': ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&'
+                'q=site:%s'),
+    },
+    'google_link': {
+        'name': '',
+        'match': google_link_match,
+        'url': ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&'
+                'q=link:%s'),
+    }
+}
+
+
+def get_seo_info(domain):
+    info = {}
+    for typ in SITES:
+        url = SITES[typ]['url'] % domain
+        content = requests.get(url).content
+        try:
+            num = int(SITES[typ]['match'].findall(content)[0].replace(',', ''))
+        except:
+            num = -1
+        info[typ] = num
+    return json.dumps(info)
 
 if __name__ == '__main__':
     pass
