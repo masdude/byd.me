@@ -81,8 +81,15 @@ def w(domain):
         print e
         return json.dumps({'code': 1, 'message': '抱歉，发生了错误，亲'})
 
+
+@app.route('/api/seo/<domain>', methods=["GET", "POST"])
+def domain_seo(domain):
+    return utils.get_seo_info(domain)
+
 if __name__ == '__main__':
-    HOST = 'byd.me'
-    PORT = 80
+    #HOST = 'byd.me'
+    #PORT = 80
+    HOST = 'localhost'
+    PORT = 1234
     app.debug = True
     app.run(host=HOST, port=PORT)
