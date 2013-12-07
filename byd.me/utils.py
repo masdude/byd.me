@@ -11,8 +11,8 @@ import config
 import json
 import requests
 
-GPR_HASH_SEED = ("Mining PageRank is AGAINST GOOGLE’S TERMS OF SERVICE. "
-                 "Yes, I’m talking to you, scammer.")
+GPR_HASH_SEED = ("Mining PageRank is AGAINST GOOGLE'S TERMS OF SERVICE. "
+                 "Yes, I'm talking to you, scammer.")
 
 s = requests.Session()
 
@@ -146,18 +146,25 @@ def get_seo_info(domain):
 
 
 def get_pagerank(domain):
-    domain = domain.replace('http://', '').strip()
-    url = ("http://toolbarqueries.google.com/tbr?client=navclient-auto&"
-           "features=Rank&ch=%s&q=info:%s") % (google_hash(domain), domain)
-    return s.get(url, timeout=config.TIMEOUT).content
+    q = 'http://%s' % domain if not domain.startswith('http://') else domain
+    try:
+        url = ("http://toolbarqueries.google.com/tbr?client=navclient-auto&ch="
+               "%s&features=Rank&q=info:%s") % (google_hash(q), q)
+        response = requests.get(url).content
+        pr = int(response[response.rindex(':')+1:])
+    except:
+        pr = -1
+    return pr
 
 
 def google_hash(value):
-    magic = 0x1020345
+    magic = 0x01020345
     for i in xrange(len(value)):
         magic ^= ord(GPR_HASH_SEED[i % len(GPR_HASH_SEED)]) ^ ord(value[i])
-        magic = (magic >> 23 | magic << 9) & 0xFFFFFFFF
-        return "8%08x" % (magic)
+        magic = magic >> 23 | magic << 9
+        magic &= 0xffffffff
+    return "8%x" % magic
+
 
 if __name__ == '__main__':
     pass
