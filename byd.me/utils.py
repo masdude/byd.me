@@ -11,6 +11,11 @@ import config
 import json
 import requests
 
+GPR_HASH_SEED = ("Mining PageRank is AGAINST GOOGLE’S TERMS OF SERVICE. "
+                 "Yes, I’m talking to you, scammer.")
+
+s = requests.Session()
+
 
 def whois(server, domain):
     '''get whois info from whois server'''
@@ -138,6 +143,21 @@ def get_seo_info(domain):
             num = -1
         info[typ] = num
     return json.dumps(info)
+
+
+def get_pagerank(domain):
+    domain = domain.replace('http://', '').strip()
+    url = ("http://toolbarqueries.google.com/tbr?client=navclient-auto&"
+           "features=Rank&ch=%s&q=info:%s") % (google_hash(domain), domain)
+    return s.get(url, timeout=config.TIMEOUT).content
+
+
+def google_hash(value):
+    magic = 0x1020345
+    for i in xrange(len(value)):
+        magic ^= ord(GPR_HASH_SEED[i % len(GPR_HASH_SEED)]) ^ ord(value[i])
+        magic = (magic >> 23 | magic << 9) & 0xFFFFFFFF
+        return "8%08x" % (magic)
 
 if __name__ == '__main__':
     pass
