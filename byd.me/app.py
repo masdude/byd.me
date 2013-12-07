@@ -79,7 +79,8 @@ def domain_seo(domain):
 
 @app.route('/api/pagerank/<domain>', methods=["GET"])
 def pagerank(domain):
-    return utils.get_pagerank(domain)
+    pr = utils.get_pagerank(domain)
+    return json.dumps({"pagerank": pr})
 
 
 @app.route('/api/whois/<domain>', methods=["GET"])
