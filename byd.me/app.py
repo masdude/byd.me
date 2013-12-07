@@ -54,16 +54,6 @@ def whois_post():
         return render_template('whois.html', whois_info='', domain='')
 
 
-@app.route('/api/whois/<domain>', methods=["GET", "POST"])
-def domain_check(domain):
-    try:
-        tld = domain.split('.')[-1]
-    except:
-        return json.dumps({'code': 1, 'message': '抱歉，发生了错误，亲'})
-    whois_info = utils.whois(config.WHOIS_SERVER[tld], domain)
-    return whois_info if whois_info else ''
-
-
 @app.route('/api/check/<domain>', methods=["GET", "POST"])
 def w(domain):
     try:
@@ -85,6 +75,21 @@ def w(domain):
 @app.route('/api/seo/<domain>', methods=["GET", "POST"])
 def domain_seo(domain):
     return utils.get_seo_info(domain)
+
+
+@app.route('/api/pagerank/<domain>', methods=["GET"])
+def pagerank(domain):
+    return utils.get_pagerank(domain)
+
+
+@app.route('/api/whois/<domain>', methods=["GET"])
+def get_whois(domain):
+    try:
+        tld = domain.split('.')[-1]
+    except:
+        return json.dumps({'code': 1, 'message': '抱歉，发生了错误，亲'})
+    whois_info = utils.whois(config.WHOIS_SERVER[tld], domain)
+    return json.dumps({'code': 0, 'whois': whois_info})
 
 if __name__ == '__main__':
     #HOST = 'byd.me'
